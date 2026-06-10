@@ -1,7 +1,8 @@
 local Cam = workspace.CurrentCamera
 local LocalPlr = player or game:GetService("Players").LocalPlayer 
 
-_G.SA_Config = {
+-- 确保 _G.SA_Config 存在，如果不存在则初始化
+_G.SA_Config = _G.SA_Config or {
     on = false,      
     fov = 150,       
     sFov = false,     
@@ -9,6 +10,11 @@ _G.SA_Config = {
     vis = false,     
     wall = false     
 }
+
+-- 确保 C 和 F 存在，提供默认值以增强兼容性
+local C = _G.C or {RED = Color3.fromRGB(255, 0, 0), GRN = Color3.fromRGB(0, 255, 0), BG_CARD = Color3.fromRGB(30, 30, 30)}
+local F = _G.F or Enum.Font.SourceSans
+
 local tarPart = nil 
 local wallPart = nil -- 用于存放墙后最近目标的变量
 
@@ -23,7 +29,7 @@ SharedVisParams.FilterType = Enum.RaycastFilterType.Exclude
 _G.fovC = Drawing.new("Circle")
 local fovC = _G.fovC
 fovC.Visible = false
-fovC.Color = C.RED or Color3.fromRGB(255, 0, 0)
+fovC.Color = C.RED
 fovC.Thickness = 1
 fovC.Filled = false
 fovC.NumSides = 60
@@ -146,17 +152,17 @@ game:GetService("RunService").RenderStepped:Connect(function()
             local realVisible = rawVisibility(tarPart)
 
             if _G.SA_Config.wall then
-                tarC.Color = C.GRN
+                tarC.Color = C.GRN or Color3.fromRGB(0, 255, 0) -- Fallback if C.GRN is not defined
                 tarC.Visible = true
             elseif _G.SA_Config.vis then
                 if realVisible then
-                    tarC.Color = C.GRN
+                    tarC.Color = C.GRN or Color3.fromRGB(0, 255, 0)
                     tarC.Visible = true
                 else
                     tarC.Visible = false
                 end
             else
-                tarC.Color = realVisible and C.GRN or C.RED
+                tarC.Color = (realVisible and (C.GRN or Color3.fromRGB(0, 255, 0))) or (C.RED or Color3.fromRGB(255, 0, 0))
                 tarC.Visible = true
             end
         else
