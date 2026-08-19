@@ -1,1 +1,1 @@
-Print("Mast")
+print("Mast")
